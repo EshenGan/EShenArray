@@ -1,0 +1,13 @@
+a simple custom array class with functionalities listed below:
+-  [] for indexing
+-  = for initialising
+-  capable to be iterated with range-based loop
+-  Add()
+-  Remove()
+-  RemoveAt()
+-  Empty()
+-  Find()
+-  Reserve()
+-  Resize()
+-  Size()
+-  Capacity()
