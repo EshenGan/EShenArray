@@ -1,6 +1,18 @@
 #include "CustomArray.h"
 
 template <typename T>
+EShenArray<T>::EShenArray(int inSize)
+{
+     size = inSize;
+     capacity = size;
+     data = new T[size];
+     if (data == nullptr)
+     {
+         std::cout << "fail to init array" << std::endl;
+     }
+}
+
+template <typename T>
 EShenArray<T>::EShenArray(int inSize, int inCapacity)
 {
      size = inSize;
