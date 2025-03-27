@@ -18,6 +18,10 @@ class EShenArray
 
 public:
 
+    EShenArray(){}
+
+    EShenArray(int size);
+
     EShenArray(int inSize, int inCapacity);
 
     EShenArray(int inSize, int inCapacity, const std::initializer_list<T>& inList);
