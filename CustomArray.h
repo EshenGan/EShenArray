@@ -19,39 +19,23 @@ class EShenArray
 public:
 
     EShenArray(){}
-
-    EShenArray(int size);
-
-    EShenArray(int inSize, int inCapacity);
-
-    EShenArray(int inSize, int inCapacity, const std::initializer_list<T>& inList);
-
-    ~EShenArray();
-
-    EShenArray& operator=(const std::initializer_list<T>& inList);
+    EShenArray(int inSize);
     
-    T operator[](int index);
+    virtual ~EShenArray();
+    
+    EShenArray& operator=(const std::initializer_list<T>& inList);
+    T& operator[](int index);
 
     void Add(T&& inData); // cv-unqualified template parameter(https://en.cppreference.com/w/cpp/language/cv) , universal/forwarding reference
-    
     void Remove();
-
     void RemoveAt(int index);
-    
     void Empty();
-    
-    int Find(T&& inKey);
+    int Find(const T& inKey);
+    void Reserve(int inCapacity);
+    void Resize(int inSize);
+    int Size() const;
+    int Capacity() const;
 
     T* begin() const;
-
     T* end() const;
-    
-    void Reserve(int inCapacity);
-    
-    void Resize(int inSize);
-    
-    int Size() const;
-
-    int Capacity() const;
-    
 };

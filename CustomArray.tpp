@@ -3,50 +3,9 @@
 template <typename T>
 EShenArray<T>::EShenArray(int inSize)
 {
-     size = inSize;
-     capacity = size;
-     data = new T[size];
-     if (data == nullptr)
-     {
-         std::cout << "fail to init array" << std::endl;
-     }
-}
-
-template <typename T>
-EShenArray<T>::EShenArray(int inSize, int inCapacity)
-{
-     size = inSize;
-     capacity = inCapacity;
-     data = new T[inCapacity];
-     if (data == nullptr)
-     {
-         std::cout << "fail to init array" << std::endl;
-     }
-}
-
-template <typename T>
-EShenArray<T>::EShenArray(int inSize, int inCapacity, const std::initializer_list<T>& inList)
-{
-     size = inSize;
-    if (inList.size() != size)
-    {
-        std::cout << "initializer list size does not match given array size" << std::endl;
-        size = 0;
-        return;
-    }
-    
-     capacity = inCapacity;
-     data = new T[inCapacity];
-     if (data == nullptr)
-     {
-         std::cout << "fail to init array" << std::endl;
-         return;
-     }
-    
-     for (int i = 0; i < size; ++i )
-     {
-         std::copy_n(inList.begin(),size,data);
-     }
+    size = inSize;
+    capacity = size;
+    data = new T[size];
 }
 
 template <typename T>
@@ -70,9 +29,9 @@ EShenArray<T>& EShenArray<T>::operator=(const std::initializer_list<T>& inList)
 }
 
 template <typename T>
-T EShenArray<T>::operator[](int index)
+T& EShenArray<T>::operator[](int index)
 {
-     if (data == nullptr || index >= size)
+     if (index >= size)
      {
          std::cout << "out of bound" << std::endl;
          exit(0);
@@ -100,52 +59,42 @@ void EShenArray<T>::Add(T&& inData)
         {
             temp[i] = std::move(data[i]);
         }
+        
         temp[size] = std::forward<T>(inData);
-        capacity = size;
         delete[] data;
         data = temp;
         temp = nullptr;
     }
+    
     size++;
-}
-
-template <typename T>
-void EShenArray<T>::Remove()
-{
-     if (size < 0)
-     {
-         std::cout << "nothing more to remove" << std::endl;
-         return;
-     }
-     
-     --size;
+    capacity = size;
 }
 
 template <typename T>
 void EShenArray<T>::RemoveAt(int index)
 {
-    if (size < 0)
+    if (size <= 0)
     {
-        std::cout << "nothing more to remove" << std::endl;
+        std::cout << "nothing more to remove" << "\n";
         return;
     }
     
-    T* temp = new T[size - 1];
     for (int i = 0; i < size - 1; ++i )
     {
         if (i >= index )
         {
-            temp[i] = std::move(data[i+1]);
-            continue;
+            data[i] = data[i + 1];
         }
-        
-        temp[i] = std::move(data[i]);
     }
-    
+
+    data[size - 1].~T();
     size--;
-    delete[] data;
-    data = temp;
-    temp = nullptr;
+}
+
+template <typename T>
+void EShenArray<T>::Remove()
+{
+    RemoveAt(size - 1);
 }
 
 template <typename T>
@@ -158,11 +107,11 @@ void EShenArray<T>::Empty()
 }
 
 template <typename T>
-int EShenArray<T>::Find(T&& inKey)
+int EShenArray<T>::Find(const T& inKey)
 {
     for (int i = 0; i < size; i++)
     {
-        if (data[i] == std::forward<T>(inKey))
+        if (data[i] == inKey)
         {
             return i;
         }
@@ -185,12 +134,12 @@ T* EShenArray<T>::end() const
 template <typename T>
 void EShenArray<T>::Reserve(int inCapacity)
 {
-    if (inCapacity < size)
+    if (inCapacity <= size)
     {
-        size = inCapacity;
+        return;
     }
     
-    T* temp = new T[inCapacity];
+    T* temp = reinterpret_cast<T*>(new char[sizeof(T) * inCapacity]);
     for (int i = 0; i < size; ++i )
     {
         temp[i] = std::move(data[i]);
@@ -208,13 +157,36 @@ void EShenArray<T>::Resize(int inSize)
     {
         return;
     }
-    if (inSize > capacity)
-    {
-        std::cout << "size cant be larger than capacity" << std::endl;
-        return;
-    }
     
-    size = inSize;
+    if (inSize > capacity) // reallocate if more than the space reserved
+    {
+       T* temp = new T[inSize];
+        for (int i = 0; i < size; ++i )
+        {
+            temp[i] = std::move(data[i]);
+        }
+        delete[] data;
+        data = temp;
+        temp = nullptr;
+        size = inSize;
+        capacity = size;
+    }
+    else if (inSize > size) // if the same or lesser than the available reserved space means no reallocate but still need to check against old size
+    {
+        for (int i = size; i < inSize; i++)
+        {
+            new (&data[i]) T;
+        }
+
+        size = inSize;
+    }
+    else
+    {
+        for (int i = size - 1; i >= inSize; i--)
+        {
+            Remove();
+        }
+    }
 }
 
 template <typename T>
