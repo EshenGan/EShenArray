@@ -64,10 +64,10 @@ void EShenArray<T>::Add(T&& inData)
         delete[] data;
         data = temp;
         temp = nullptr;
+        capacity++;
     }
     
-    size++;
-    capacity = size;
+    ++size;
 }
 
 template <typename T>
