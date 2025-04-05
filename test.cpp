@@ -15,15 +15,15 @@ int main(int argc, char* argv[])
     cout << "array1: " << array1[5] << "\n";
     
     array1.Remove();
-    cout <<"array1: ";
     
+    cout <<"array1: ";
     for (auto element : array1)
     {
         cout << element;
     }
     std::printf("\n");
     
-    int index = array1.Find(4);
+    int index = array1.Find(75);
     cout << "array1: " << index << "\n";
 
     EShenArray<float>array2(size);
@@ -37,7 +37,6 @@ int main(int argc, char* argv[])
     array2.Resize(6);
     cout << "array2 size:" << array2.Size() << "\n";
     cout << "array2 capacity: " << array2.Capacity() << "\n";
-    cout << "array2 " << array2[5] << "\n";
 
     array2 = {0.0,1.0,2.0,3.0,4.0,5.0};
     cout << "array2: " << array2[5] << "\n";
